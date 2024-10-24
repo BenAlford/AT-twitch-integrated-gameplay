@@ -22,17 +22,26 @@ public class InputBehaviour : MonoBehaviour
         {
             if (input_text.text != "")
             {
-                string text = input_text.text;
-                if (text[0] == '!')
-                {
-                    text = text.Substring(1);
-                    string[] words = text.Split(' ');
-                    if (words.Length == 3 && words[0] == "place")
-                    {
-                        tilemap_manager.PlaceTile(words[1], words[2]);
-                    }
-                }
+                ParseInput(input_text.text);
             }
         }
+    }
+
+    void ParseInput(string text)
+    {
+        if (text[0] == '!')
+        {
+            text = text.Substring(1);
+            string[] words = text.Split(' ');
+            if (words.Length == 3 && words[0] == "place")
+            {
+                tilemap_manager.PlaceTile(words[1], words[2]);
+            }
+        }
+    }
+
+    public void OnChatMessage(string user, string msg)
+    {
+        ParseInput(msg);
     }
 }

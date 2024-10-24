@@ -27,19 +27,20 @@ public class TilemapManager : MonoBehaviour
 
     public void PlaceTile(string name, string pos)
     {
+        print(pos[pos.Length-1]);
         int x = pos[0] - 97;
         if (x >= 0 && x < 26)
         {
-            string num = pos.Substring(1);
-            print(num);
-            int total = 0;
-            for (int i = 0; i < num.Length - 1; i++)
-            {
-                total *= 10;
-                total += num[i] - 48;
-                print(total);
-            }
-            int y = total;
+            int y = int.Parse(pos.Substring(1));
+            //string num = pos.Substring(1);
+            //int total = 0;
+            //for (int i = 0; i < num.Length; i++)
+            //{
+            //    total *= 10;
+            //    total += num[i] - 48;
+            //    print(total);
+            //}
+            //int y = total;
 
             if (name == "bomb")
             {
