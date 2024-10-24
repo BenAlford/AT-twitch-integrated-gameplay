@@ -25,23 +25,21 @@ public class TilemapManager : MonoBehaviour
         return "None";
     }
 
-    public void PlaceTile(string name, string pos)
+    public void PlaceTile(string name, string pos_x, string pos_y)
     {
-        print(pos[pos.Length-1]);
-        int x = pos[0] - 97;
-        if (x >= 0 && x < 26)
+        int x = int.Parse(pos_x);
+        int y = int.Parse(pos_y);
+        //string num = pos.Substring(1);
+        //int total = 0;
+        //for (int i = 0; i < num.Length; i++)
+        //{
+        //    total *= 10;
+        //    total += num[i] - 48;
+        //    print(total);
+        //}
+        //int y = total;
+        if (x > 0 && x < 46 && y > 0 && y < 26)
         {
-            int y = int.Parse(pos.Substring(1));
-            //string num = pos.Substring(1);
-            //int total = 0;
-            //for (int i = 0; i < num.Length; i++)
-            //{
-            //    total *= 10;
-            //    total += num[i] - 48;
-            //    print(total);
-            //}
-            //int y = total;
-
             if (name == "bomb")
             {
                 Instantiate(bomb).transform.position = new Vector3(x, y, 0);
@@ -65,7 +63,7 @@ public class TilemapManager : MonoBehaviour
                     tilemap.SetTile(new Vector3Int(x, y, 0), saw_tile);
                     GameObject newObj = Instantiate(saw);
                     newObj.transform.position = new Vector3(x, y, 0);
-                    objects.Add(new Vector2Int(x,y),newObj);
+                    objects.Add(new Vector2Int(x, y), newObj);
                 }
             }
         }
@@ -93,7 +91,7 @@ public class TilemapManager : MonoBehaviour
                         if (saw != null) Destroy(saw);
                         objects.Remove(new Vector2Int(i, j));
                     }
-                    tilemap.SetTile(new Vector3Int(i, j, 0), null);
+                    if (tile.name != "safe" && tile.name != "unbreakable") tilemap.SetTile(new Vector3Int(i, j, 0), null);
                 }
             }
         }

@@ -18,13 +18,13 @@ public class InputBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            if (input_text.text != "")
-            {
-                ParseInput(input_text.text);
-            }
-        }
+        //if (Input.GetKeyDown(KeyCode.Return))
+        //{
+        //    if (input_text.text != "")
+        //    {
+        //        ParseInput(input_text.text);
+        //    }
+        //}
     }
 
     void ParseInput(string text)
@@ -33,9 +33,9 @@ public class InputBehaviour : MonoBehaviour
         {
             text = text.Substring(1);
             string[] words = text.Split(' ');
-            if (words.Length == 3 && words[0] == "place")
+            if (words.Length == 4 && words[0] == "place")
             {
-                tilemap_manager.PlaceTile(words[1], words[2]);
+                tilemap_manager.PlaceTile(words[1], words[2], words[3]);
             }
         }
     }

@@ -2,10 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
+using static Unity.VisualScripting.Member;
 
 public class PlayerBehaviour : MonoBehaviour
 {
+    [SerializeField] Vector3 respawnPos;
     bool grounded = false;
     bool on_ground = false;
     bool can_jump = true;
@@ -286,13 +289,12 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void Damage(Vector3 source)
     {
-        print("damage");
         if (!invul)
         {
             hp -= 1;
             if (hp <= 0)
             {
-                Destroy(gameObject);
+                SceneManager.LoadScene("Lose");
             }
             else
             {
@@ -306,6 +308,41 @@ public class PlayerBehaviour : MonoBehaviour
                 disable_controls = true;
             }
 
+        }
+    }
+
+    public void ResetPos()
+    {
+        TakeDamage();
+        transform.position = respawnPos;
+    }
+
+    void TakeDamage()
+    {
+        hp -= 1;
+        if (hp <= 0)
+        {
+            SceneManager.LoadScene("Lose");
+        }
+        else
+        {
+            invul = true;
+            render.color = new Color(render.color.r, render.color.g, render.color.b, 0.5f);
+            jumping = false;
+            jump_hold_timer = max_jump_hold_time;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "deathPlane")
+        {
+            ResetPos();
+        }
+
+        if (collision.gameObject.tag == "Goal")
+        {
+            SceneManager.LoadScene("Win");
         }
     }
 }
