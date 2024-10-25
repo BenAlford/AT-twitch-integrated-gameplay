@@ -29,15 +29,6 @@ public class TilemapManager : MonoBehaviour
     {
         int x = int.Parse(pos_x);
         int y = int.Parse(pos_y);
-        //string num = pos.Substring(1);
-        //int total = 0;
-        //for (int i = 0; i < num.Length; i++)
-        //{
-        //    total *= 10;
-        //    total += num[i] - 48;
-        //    print(total);
-        //}
-        //int y = total;
         if (x > 0 && x < 46 && y > 0 && y < 26)
         {
             if (name == "bomb")
@@ -76,7 +67,6 @@ public class TilemapManager : MonoBehaviour
         {
             for (int j = y-r; j <= y+r; j++)
             {
-                //print(new Vector2(i,j));
                 TileBase tile = tilemap.GetTile(new Vector3Int(i, j, 0));
                 if (tile != null)
                 {

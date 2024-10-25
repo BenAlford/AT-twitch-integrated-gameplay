@@ -20,6 +20,8 @@ public class TwitchIntegration : MonoBehaviour
     string OAuth = "oauth:authpcswx7ytnvdetwmscysxwom0hw";
     string channel = "BenTheGameDev";
 
+    public ChannelScriptable channel_scriptable;
+
     float ping_counter = 0;
 
     private void ConnectToTwitch()
@@ -37,12 +39,14 @@ public class TwitchIntegration : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        channel = channel_scriptable.channel;
         ConnectToTwitch();
     }
 
     // Update is called once per frame
     void Update()
     {
+        GetComponent<SpriteRenderer>().color = Color.green;
         ping_counter += Time.deltaTime;
         if (ping_counter > 60)
         {
@@ -52,6 +56,7 @@ public class TwitchIntegration : MonoBehaviour
         }
         if (!twitch.Connected)
         {
+            GetComponent<SpriteRenderer>().color = Color.red;
             ConnectToTwitch();
         }
         if (twitch.Available > 0)
