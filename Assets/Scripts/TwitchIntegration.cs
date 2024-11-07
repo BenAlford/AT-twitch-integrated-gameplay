@@ -17,7 +17,7 @@ public class TwitchIntegration : MonoBehaviour
     const int port = 6667;
 
     string user = "BenTheGameDev";
-    string OAuth = "oauth:authpcswx7ytnvdetwmscysxwom0hw";
+    string OAuth = "oauth:aqvkhqc4stflmciixkaa9q8u7vsr9o";
     string channel = "BenTheGameDev";
 
     public ChannelScriptable channel_scriptable;
@@ -46,6 +46,11 @@ public class TwitchIntegration : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            writer.WriteLine($"PRIVMSG #{channel} :hi");
+            writer.Flush();
+        }
         GetComponent<SpriteRenderer>().color = Color.green;
         ping_counter += Time.deltaTime;
         if (ping_counter > 60)
@@ -62,6 +67,7 @@ public class TwitchIntegration : MonoBehaviour
         if (twitch.Available > 0)
         {
             string message = reader.ReadLine();
+            print(message);
             if (message.Contains("PRIVMSG"))
             {
                 string name = message.Substring(1, message.IndexOf("!") - 1);

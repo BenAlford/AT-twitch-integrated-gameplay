@@ -31,7 +31,7 @@ public class TestTwitchApp : MonoBehaviour
         string access_token = channelScriptable.access_token;
         string client_ID = channelScriptable.client_id;
 
-        string twitchAPIURL = "https://api.twitch.tv/helix/extensions";
+        string twitchAPIURL = "https://api.twitch.tv/helix/users";
 
         UnityWebRequest request = UnityWebRequest.Get(twitchAPIURL);
         request.SetRequestHeader("Client-ID", client_ID);
