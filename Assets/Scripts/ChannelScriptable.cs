@@ -7,4 +7,6 @@ public class ChannelScriptable : ScriptableObject
 {
     public string channel;
     public float viewer_cooldown;
+    public string client_id;
+    public string access_token;
 }

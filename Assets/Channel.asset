@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cff1b3a12f1e4714ea2c330be5410e92, type: 3}
   m_Name: Channel
   m_EditorClassIdentifier: 
-  channel: 
+  channel: BenTheGameDev
+  viewer_cooldown: 0
+  client_id: lqz26yxqt9usryhf6tn9mah0knd852
+  access_token: vol9a4kb7ok99zt2qzx1nfarlvzcod

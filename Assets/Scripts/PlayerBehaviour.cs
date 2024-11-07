@@ -44,7 +44,7 @@ public class PlayerBehaviour : MonoBehaviour
     public TilemapManager tilemap;
 
     public float max_hp;
-    float hp;
+    public float hp;
     bool invul = false;
     public float invul_time;
     float invul_timer;
