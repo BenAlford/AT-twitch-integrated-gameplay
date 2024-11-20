@@ -55,6 +55,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     SpriteRenderer render;
 
+    [SerializeField] ChannelScriptable channelScriptable;
 
     // Start is called before the first frame update
     void Start()
@@ -73,12 +74,12 @@ public class PlayerBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             jump_pressed = true;
             jump_early_timer = jump_early_time;
         }
-        else if (Input.GetKeyUp(KeyCode.W))
+        else if (Input.GetKeyUp(KeyCode.Space))
         {
             jump_released = true;
         }
@@ -281,6 +282,25 @@ public class PlayerBehaviour : MonoBehaviour
         {
             if (ray[i].collider.gameObject.tag == "Ground")
             {
+                Vector3 trueend = start + end * distance;
+                string name = tilemap.GetName(Mathf.RoundToInt(trueend.x),Mathf.RoundToInt(trueend.y));
+                if (name != null)
+                {
+                    print(name);
+                    if (channelScriptable.helpers.Contains(name))
+                    {
+                        channelScriptable.helpers.Remove(name);
+                        channelScriptable.helpers.Insert(0, name);
+                    }
+                    else
+                    {
+                        channelScriptable.helpers.Insert(0,name);
+                        if (channelScriptable.helpers.Count > 5)
+                        {
+                            channelScriptable.helpers.RemoveAt(5);
+                        }
+                    }
+                }
                 return true;
             }
         }
@@ -291,6 +311,24 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if (!invul)
         {
+            string name = tilemap.GetName(Mathf.RoundToInt(source.x), Mathf.RoundToInt(source.y));
+            if (name != null)
+            {
+                print(name);
+                if (channelScriptable.enemies.Contains(name))
+                {
+                    channelScriptable.enemies.Remove(name);
+                    channelScriptable.enemies.Insert(0, name);
+                }
+                else
+                {
+                    channelScriptable.enemies.Insert(0, name);
+                    if (channelScriptable.enemies.Count > 5)
+                    {
+                        channelScriptable.enemies.RemoveAt(5);
+                    }
+                }
+            }
             hp -= 1;
             if (hp <= 0)
             {

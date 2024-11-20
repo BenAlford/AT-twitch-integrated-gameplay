@@ -11,10 +11,11 @@ public class InputBehaviour : MonoBehaviour
     public TextMeshProUGUI input_text;
     public TilemapManager tilemap_manager;
     public float cooldown = 10;
+    public ChannelScriptable channelScriptable;
     // Start is called before the first frame update
     void Start()
     {
-        
+        cooldown = channelScriptable.viewer_cooldown;
     }
 
     // Update is called once per frame
@@ -37,18 +38,26 @@ public class InputBehaviour : MonoBehaviour
             string[] words = text.Split(' ');
             if (words.Length == 4 && words[0] == "place")
             {
-                if (viewer_last_command_time.TryGetValue(user, out float last_command_time))
+                print(cooldown);
+                if (cooldown == 0)
                 {
-                    if (Time.time - last_command_time > cooldown)
-                    {
-                        tilemap_manager.PlaceTile(words[1], words[2], words[3]);
-                        viewer_last_command_time[user] = Time.time;
-                    }
+                    tilemap_manager.PlaceTile(words[1], words[2], words[3], user);
                 }
                 else
                 {
-                    tilemap_manager.PlaceTile(words[1], words[2], words[3]);
-                    viewer_last_command_time.Add(user, Time.time);
+                    if (viewer_last_command_time.TryGetValue(user, out float last_command_time))
+                    {
+                        if (Time.time - last_command_time > cooldown)
+                        {
+                            tilemap_manager.PlaceTile(words[1], words[2], words[3], user);
+                            viewer_last_command_time[user] = Time.time;
+                        }
+                    }
+                    else
+                    {
+                        tilemap_manager.PlaceTile(words[1], words[2], words[3], user);
+                        viewer_last_command_time.Add(user, Time.time);
+                    }
                 }
             }
         }

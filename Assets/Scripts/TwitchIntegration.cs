@@ -12,6 +12,7 @@ public class TwitchIntegration : MonoBehaviour
     TcpClient twitch;
     StreamReader reader;
     StreamWriter writer;
+    [SerializeField] InputBehaviour input;
 
     const string url = "irc.chat.twitch.tv";
     const int port = 6667;
@@ -74,7 +75,8 @@ public class TwitchIntegration : MonoBehaviour
                 string msg = message.Substring(message.IndexOf(":",1) + 1, message.Length - message.IndexOf(":", 1) - 1);
                 print(name);
                 print(msg);
-                OnChatMessage?.Invoke(name, msg);
+                //OnChatMessage?.Invoke(name, msg);
+                input.OnChatMessage(name, msg);
             }
         }
     }

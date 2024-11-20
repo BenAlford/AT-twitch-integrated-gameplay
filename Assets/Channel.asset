@@ -16,3 +16,11 @@ MonoBehaviour:
   viewer_cooldown: 0
   client_id: lqz26yxqt9usryhf6tn9mah0knd852
   access_token: vol9a4kb7ok99zt2qzx1nfarlvzcod
+  helpers:
+  - ben
+  - bronte
+  - mel
+  enemies:
+  - archie
+  - morgan
+  - Elijah

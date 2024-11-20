@@ -9,4 +9,6 @@ public class ChannelScriptable : ScriptableObject
     public float viewer_cooldown;
     public string client_id;
     public string access_token;
+    public List<string> helpers;
+    public List<string> enemies;
 }
