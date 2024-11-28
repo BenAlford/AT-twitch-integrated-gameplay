@@ -36,27 +36,26 @@ public class InputBehaviour : MonoBehaviour
         {
             text = text.Substring(1);
             string[] words = text.Split(' ');
-            if (words.Length == 4 && words[0] == "place")
+            if (words.Length == 5 && words[0] == "place")
             {
-                print(cooldown);
                 if (cooldown == 0)
                 {
-                    tilemap_manager.PlaceTile(words[1], words[2], words[3], user);
+                    tilemap_manager.PlaceTile(words[1], words[2], words[3], words[4]);
                 }
                 else
                 {
-                    if (viewer_last_command_time.TryGetValue(user, out float last_command_time))
+                    if (viewer_last_command_time.TryGetValue(words[4], out float last_command_time))
                     {
                         if (Time.time - last_command_time > cooldown)
                         {
-                            tilemap_manager.PlaceTile(words[1], words[2], words[3], user);
-                            viewer_last_command_time[user] = Time.time;
+                            tilemap_manager.PlaceTile(words[1], words[2], words[3], words[4]);
+                            viewer_last_command_time[words[4]] = Time.time;
                         }
                     }
                     else
                     {
-                        tilemap_manager.PlaceTile(words[1], words[2], words[3], user);
-                        viewer_last_command_time.Add(user, Time.time);
+                        tilemap_manager.PlaceTile(words[1], words[2], words[3], words[4]);
+                        viewer_last_command_time.Add(words[4], Time.time);
                     }
                 }
             }

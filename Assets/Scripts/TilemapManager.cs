@@ -16,6 +16,7 @@ public class TilemapManager : MonoBehaviour
     [SerializeField] GameObject bomb;
     [SerializeField] Tile heal_tile;
     [SerializeField] GameObject heal;
+    [SerializeField] Tile bomb_part_tile;
     Dictionary<Vector2Int,GameObject> objects = new Dictionary<Vector2Int, GameObject>();
     string[] names = new string[25 * 45];
     
@@ -37,13 +38,9 @@ public class TilemapManager : MonoBehaviour
         {
             if (name == "bomb")
             {
-                Instantiate(bomb).transform.position = new Vector3(x, y, 0);
-            }
-            else if (name == "bigbomb")
-            {
                 GameObject newbomb = Instantiate(bomb);
                 newbomb.transform.position = new Vector3(x, y, 0);
-                newbomb.GetComponent<BombBehaviour>().radius = 2;
+                newbomb.GetComponent<BombBehaviour>().chatter = user;
             }
 
             if (CanPlace(x, y))
@@ -59,18 +56,64 @@ public class TilemapManager : MonoBehaviour
                     tilemap.SetTile(new Vector3Int(x, y, 0), saw_tile);
                     GameObject newObj = Instantiate(saw);
                     newObj.transform.position = new Vector3(x, y, 0);
+                    newObj.GetComponent<SawBehaviour>().chatter = user;
                     objects.Add(new Vector2Int(x, y), newObj);
                 }
                 if (name == "heal")
                 {
                     tilemap.SetTile(new Vector3Int(x, y, 0), heal_tile);
-                    CheckForHeal(x,y);
+                    CheckForHeal(x,y,user);
+                }
+                else if (name == "bigbomb")
+                {
+                    tilemap.SetTile(new Vector3Int(x, y, 0), bomb_part_tile);
+                    CheckForBomb(x,y,user);
                 }
             }
         }
     }
 
-    void CheckForHeal(int x, int y)
+    void CheckForBomb(int x, int y, string name)
+    {
+        bool bomb_placed = false;
+        for (int centre_x = x - 1; centre_x <= x + 1; centre_x++)
+        {
+            for (int centre_y = y - 1; centre_y <= y + 1; centre_y ++)
+            {
+                bool bomb_formed = true;
+                for (int i = centre_x - 1; i <= centre_x + 1; i++)
+                {
+                    for (int j = centre_y - 1; j <= centre_y + 1; j++)
+                    {
+                        TileBase tile = tilemap.GetTile(new Vector3Int(i, j, 0));
+                        if (tile == null || tile.name != "bomb_part")
+                        {
+                            bomb_formed = false;
+                            break;
+                        }
+                    }
+                    if (!bomb_formed) break;
+                }
+                if (bomb_formed)
+                {
+                    GameObject newbomb = Instantiate(bomb);
+                    newbomb.transform.position = new Vector3(centre_x, centre_y, 0);
+                    newbomb.GetComponent<BombBehaviour>().radius = 2;
+                    newbomb.GetComponent<BombBehaviour>().Fall();
+                    newbomb.GetComponent<BombBehaviour>().chatter = name;
+                    bomb_placed = true;
+                    RemoveTiles(centre_x, centre_y, 1);
+                    break;
+                }
+            }
+            if (bomb_placed)
+            {
+                break;
+            }
+        }
+    }
+
+    void CheckForHeal(int x, int y, string name)
     {
         if ((tilemap.GetTile(new Vector3Int(x + 1, y, 0)) != null && tilemap.GetTile(new Vector3Int(x + 1, y, 0)).name  == "health part") &&
            (tilemap.GetTile(new Vector3Int(x - 1, y, 0)) != null && tilemap.GetTile(new Vector3Int(x - 1, y, 0)).name == "health part") &&
@@ -79,6 +122,7 @@ public class TilemapManager : MonoBehaviour
         {
             GameObject newheal = Instantiate(heal);
             newheal.transform.position = new Vector3(x, y, 0);
+            newheal.GetComponent<HealthBehaviour>().chatter_name = name;
             ClearHeals(x,y);
         }
         else if
@@ -89,6 +133,7 @@ public class TilemapManager : MonoBehaviour
         {
             GameObject newheal = Instantiate(heal);
             newheal.transform.position = new Vector3(x, y + 1, 0);
+            newheal.GetComponent<HealthBehaviour>().chatter_name = name;
             ClearHeals(x, y + 1);
         }
         else if
@@ -99,6 +144,7 @@ public class TilemapManager : MonoBehaviour
         {
             GameObject newheal = Instantiate(heal);
             newheal.transform.position = new Vector3(x + 1, y, 0);
+            newheal.GetComponent<HealthBehaviour>().chatter_name = name;
             ClearHeals(x + 1, y);
         }
         else if
@@ -109,6 +155,7 @@ public class TilemapManager : MonoBehaviour
         {
             GameObject newheal = Instantiate(heal);
             newheal.transform.position = new Vector3(x, y - 1, 0);
+            newheal.GetComponent<HealthBehaviour>().chatter_name = name;
             ClearHeals(x, y - 1);
         }
         else if
@@ -119,6 +166,7 @@ public class TilemapManager : MonoBehaviour
         {
             GameObject newheal = Instantiate(heal);
             newheal.transform.position = new Vector3(x - 1, y, 0);
+            newheal.GetComponent<HealthBehaviour>().chatter_name = name;
             ClearHeals(x - 1, y);
         }
     }

@@ -69,6 +69,9 @@ public class PlayerBehaviour : MonoBehaviour
         jump_cd_timer = jump_cd;
         rb = GetComponent<Rigidbody2D>();
         gravity = rb.gravityScale;
+
+        channelScriptable.helpers.Clear();
+        channelScriptable.enemies.Clear();
     }
 
     // Update is called once per frame
@@ -307,11 +310,10 @@ public class PlayerBehaviour : MonoBehaviour
         return false;
     }
 
-    public void Damage(Vector3 source)
+    public void Damage(Vector3 source, string name)
     {
         if (!invul)
         {
-            string name = tilemap.GetName(Mathf.RoundToInt(source.x), Mathf.RoundToInt(source.y));
             if (name != null)
             {
                 print(name);
@@ -382,5 +384,28 @@ public class PlayerBehaviour : MonoBehaviour
         {
             SceneManager.LoadScene("Win");
         }
+    }
+
+    public bool Heal(string name)
+    {
+        if (hp <= max_hp)
+        {
+            hp += 1;
+            if (channelScriptable.helpers.Contains(name))
+            {
+                channelScriptable.helpers.Remove(name);
+                channelScriptable.helpers.Insert(0, name);
+            }
+            else
+            {
+                channelScriptable.helpers.Insert(0, name);
+                if (channelScriptable.helpers.Count > 5)
+                {
+                    channelScriptable.helpers.RemoveAt(5);
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

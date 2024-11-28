@@ -47,11 +47,11 @@ public class TwitchIntegration : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            writer.WriteLine($"PRIVMSG #{channel} :hi");
-            writer.Flush();
-        }
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    writer.WriteLine($"PRIVMSG #{channel} :hi");
+        //    writer.Flush();
+        //}
         GetComponent<SpriteRenderer>().color = Color.green;
         ping_counter += Time.deltaTime;
         if (ping_counter > 60)
@@ -65,7 +65,7 @@ public class TwitchIntegration : MonoBehaviour
             GetComponent<SpriteRenderer>().color = Color.red;
             ConnectToTwitch();
         }
-        if (twitch.Available > 0)
+        while (twitch.Available > 0)
         {
             string message = reader.ReadLine();
             print(message);

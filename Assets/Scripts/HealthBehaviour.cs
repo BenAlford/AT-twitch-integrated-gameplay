@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SawBehaviour : MonoBehaviour
+public class HealthBehaviour : MonoBehaviour
 {
-    public string chatter;
+    public string chatter_name;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,11 +16,17 @@ public class SawBehaviour : MonoBehaviour
     {
         
     }
-    private void OnTriggerEnter2D(Collider2D collision)
+
+    private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Player")
         {
-            collision.gameObject.GetComponent<PlayerBehaviour>().Damage(transform.position, chatter);
+            bool success = collision.gameObject.GetComponent<PlayerBehaviour>().Heal(chatter_name);
+            if (success)
+            {
+                Destroy(gameObject);
+            }
+
         }
     }
 }
