@@ -20,6 +20,7 @@ public class SawBehaviour : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
+            // passes on the viewer that spawned it
             collision.gameObject.GetComponent<PlayerBehaviour>().Damage(transform.position, chatter);
         }
     }

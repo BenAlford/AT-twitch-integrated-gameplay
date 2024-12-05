@@ -7,10 +7,13 @@ public class ChattersDisplay : MonoBehaviour
 {
     public bool helpersShown;
     public ChannelScriptable channelScriptable;
+
     // Start is called before the first frame update
     void Start()
     {
         string names = "";
+
+        // displays the names of the viewers who helped
         if (helpersShown)
         {
             for (int i = 0; i < channelScriptable.helpers.Count; i++)
@@ -27,6 +30,7 @@ public class ChattersDisplay : MonoBehaviour
             }
             names += " helped!";
         }
+        // desplays the names of the viewers who hindered
         else
         {
             for (int i = 0; i < channelScriptable.enemies.Count; i++)
@@ -44,11 +48,5 @@ public class ChattersDisplay : MonoBehaviour
             names += " hindered!";
         }
         GetComponent<TextMeshProUGUI>().text = names;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

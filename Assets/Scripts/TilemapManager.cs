@@ -20,6 +20,7 @@ public class TilemapManager : MonoBehaviour
     Dictionary<Vector2Int,GameObject> objects = new Dictionary<Vector2Int, GameObject>();
     string[] names = new string[25 * 45];
     
+    // returns the tile type at the specified location
     public string GetTile(int x, int y)
     {
         TileBase a = tilemap.GetTile(new Vector3Int(x, y, 0));
@@ -30,12 +31,14 @@ public class TilemapManager : MonoBehaviour
         return "None";
     }
 
+    // places a tile at the specified position
     public void PlaceTile(string name, string pos_x, string pos_y, string user)
     {
         int x = int.Parse(pos_x);
         int y = int.Parse(pos_y);
         if (x > 0 && x < 46 && y > 0 && y < 26)
         {
+            // spawns a bomb
             if (name == "bomb")
             {
                 GameObject newbomb = Instantiate(bomb);
@@ -43,6 +46,7 @@ public class TilemapManager : MonoBehaviour
                 newbomb.GetComponent<BombBehaviour>().chatter = user;
             }
 
+            // checks if the spot is filled
             if (CanPlace(x, y))
             {
                 names[45 * (y - 1) + (x - 1)] = user;
@@ -73,6 +77,7 @@ public class TilemapManager : MonoBehaviour
         }
     }
 
+    // checks if a 3x3 grid is formed with this placement
     void CheckForBomb(int x, int y, string name)
     {
         bool bomb_placed = false;
@@ -94,6 +99,7 @@ public class TilemapManager : MonoBehaviour
                     }
                     if (!bomb_formed) break;
                 }
+                // spawns the bomb and removes the tiles that formed it
                 if (bomb_formed)
                 {
                     GameObject newbomb = Instantiate(bomb);
@@ -113,6 +119,7 @@ public class TilemapManager : MonoBehaviour
         }
     }
 
+    // checks each possible position to see if a plus is formed, then spawns a health pickup
     void CheckForHeal(int x, int y, string name)
     {
         if ((tilemap.GetTile(new Vector3Int(x + 1, y, 0)) != null && tilemap.GetTile(new Vector3Int(x + 1, y, 0)).name  == "health part") &&
@@ -171,6 +178,7 @@ public class TilemapManager : MonoBehaviour
         }
     }
 
+    // removes the tiles that spawned the heal
     void ClearHeals(int x, int y)
     {
         tilemap.SetTile(new Vector3Int(x, y, 0), null);
@@ -180,6 +188,7 @@ public class TilemapManager : MonoBehaviour
         tilemap.SetTile(new Vector3Int(x, y-1, 0), null);
     }
 
+    // removes tiles at a certain position and radius
     public void RemoveTiles(int x, int y, int r)
     {
         r = Mathf.Abs(r);
@@ -201,12 +210,14 @@ public class TilemapManager : MonoBehaviour
                         if (saw != null) Destroy(saw);
                         objects.Remove(new Vector2Int(i, j));
                     }
+                    // protects certain tiles from being destroyed
                     if (tile.name != "safe" && tile.name != "unbreakable") tilemap.SetTile(new Vector3Int(i, j, 0), null);
                 }
             }
         }
     }
 
+    // checks if a tile is filled
     bool CanPlace(int x, int y)
     {
         if (tilemap.GetTile(new Vector3Int(x, y, 0)) == null)
@@ -216,6 +227,7 @@ public class TilemapManager : MonoBehaviour
         return false;
     }
 
+    // gets the name of the viewer who placed a specific tile
     public string GetName(int x, int y)
     {
         return names[45 * (y - 1) + (x - 1)];

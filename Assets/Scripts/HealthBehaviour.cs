@@ -21,6 +21,7 @@ public class HealthBehaviour : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
+            // passes on the viewers name to the player
             bool success = collision.gameObject.GetComponent<PlayerBehaviour>().Heal(chatter_name);
             if (success)
             {

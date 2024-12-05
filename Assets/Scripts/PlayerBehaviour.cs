@@ -60,6 +60,7 @@ public class PlayerBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // sets variables
         render = GetComponent<SpriteRenderer>();
         disable_controls_timer = disable_controls_time;
         invul_timer = invul_time;
@@ -77,15 +78,18 @@ public class PlayerBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // player jump code
         if (Input.GetKeyDown(KeyCode.Space))
         {
             jump_pressed = true;
             jump_early_timer = jump_early_time;
         }
+        // stops applying upward force
         else if (Input.GetKeyUp(KeyCode.Space))
         {
             jump_released = true;
         }
+        // makes the player unable to jump after a set amount of time after the player steps off the edge
         if (!on_ground && grounded)
         {
             coyote_time -= Time.deltaTime;
@@ -94,6 +98,7 @@ public class PlayerBehaviour : MonoBehaviour
                 grounded = false;
             }
         }
+        // same but for walls
         if (!on_wall && wall_sliding)
         {
             wall_coyote_time -= Time.deltaTime;
@@ -102,6 +107,7 @@ public class PlayerBehaviour : MonoBehaviour
                 wall_sliding = false;
             }
         }
+        // a short cooldown on being able to jump
         if (!can_jump)
         {
             jump_cd_timer -= Time.deltaTime;
@@ -111,6 +117,7 @@ public class PlayerBehaviour : MonoBehaviour
                 jump_cd_timer = jump_cd;
             }
         }
+        // timer for allowing a jump to go through if pressed slightly before landing
         if (jump_pressed)
         {
             jump_early_timer-= Time.deltaTime;
@@ -119,6 +126,7 @@ public class PlayerBehaviour : MonoBehaviour
                 jump_pressed = false;
             }
         }
+        // timer for being immune to damage
         if (invul)
         {
             invul_timer -= Time.deltaTime;
@@ -129,6 +137,7 @@ public class PlayerBehaviour : MonoBehaviour
                 render.color = new Color(render.color.r, render.color.g, render.color.b, 1);
             }
         }
+        // timer for not being able to move (after taking damage)
         if (disable_controls)
         {
             disable_controls_timer -= Time.deltaTime;
@@ -142,6 +151,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // timer that controls how long the player can hold jump to increase jump height
         if (jumping)
         {
             jump_hold_timer -= Time.fixedDeltaTime;
@@ -152,10 +162,13 @@ public class PlayerBehaviour : MonoBehaviour
             }
         }
 
+        // sets a lower max falling speed if speed player is wall sliding
         if (rb.velocity.y < (wall_sliding ? -max_fall_velocity / max_fall_wall_mult : -max_fall_velocity))
         {
             rb.velocity = new Vector2(rb.velocity.x, (wall_sliding ? -max_fall_velocity / max_fall_wall_mult : -max_fall_velocity));
         }
+
+        // sets a lower gravity if wall sliding
         if (wall_sliding && rb.velocity.y < 0)
         {
             rb.gravityScale = gravity / 4;
@@ -167,6 +180,7 @@ public class PlayerBehaviour : MonoBehaviour
 
         on_ground = false;
 
+        // checks if player is on the ground
         if (CheckForGround(transform.position - new Vector3(0.4f, 0, 0), new Vector2(0, -1), 0.5f) ||
             CheckForGround(transform.position + new Vector3(0.4f, 0, 0), new Vector2(0, -1), 0.5f))
         {
@@ -179,6 +193,7 @@ public class PlayerBehaviour : MonoBehaviour
 
         on_wall = false;
 
+        //checks if player is on the walls
         if (CheckForGround(transform.position - new Vector3(0, 0.4f, 0), new Vector2(1, 0), 0.5f) ||
             CheckForGround(transform.position + new Vector3(0, 0.4f, 0), new Vector2(1, 0), 0.5f))
         {
@@ -198,6 +213,7 @@ public class PlayerBehaviour : MonoBehaviour
 
         if (!disable_controls)
         {
+            // slows the player to a stop if not moving left/right
             if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && rb.velocity.x != 0)
             {
                 if (Mathf.Abs(rb.velocity.x) < acc * 1.25f * Time.fixedDeltaTime)
@@ -213,6 +229,7 @@ public class PlayerBehaviour : MonoBehaviour
                     rb.AddForce(new Vector2(-acc * 1.25f, 0));
                 }
             }
+            // moves the player left / right based on input
             else
             {
                 if (Input.GetKey(KeyCode.A))
@@ -240,6 +257,8 @@ public class PlayerBehaviour : MonoBehaviour
                     if (rb.velocity.x > max_speed) { rb.velocity = new Vector2(max_speed, rb.velocity.y); }
                 }
             }
+
+            // jumps if space is pressed and the player can jump
             if (jump_pressed && can_jump)
             {
                 if (grounded)
@@ -252,6 +271,7 @@ public class PlayerBehaviour : MonoBehaviour
                     on_ground = false;
                     can_jump = false;
                 }
+                // adds extra force away from the wall if wall sliding
                 else if (wall_sliding)
                 {
                     jump_pressed = false;
@@ -264,11 +284,13 @@ public class PlayerBehaviour : MonoBehaviour
                     jumping = true;
                 }
             }
+            // stops jumping if space is released
             if (jumping && jump_released)
             {
                 jumping = false;
                 jump_hold_timer = max_jump_hold_time;
             }
+            // moves the player up
             else if (jumping)
             {
                 rb.velocity = new Vector2(rb.velocity.x, jump_vel);
@@ -278,6 +300,7 @@ public class PlayerBehaviour : MonoBehaviour
         jump_released = false;
     }
 
+    // checks if the player is touching a ground / wall tile
     bool CheckForGround(Vector3 start, Vector3 end, float distance)
     {
         RaycastHit2D[] ray = Physics2D.RaycastAll(start, end, distance);
@@ -286,6 +309,8 @@ public class PlayerBehaviour : MonoBehaviour
             if (ray[i].collider.gameObject.tag == "Ground")
             {
                 Vector3 trueend = start + end * distance;
+
+                // gets the viewer who placed the tile and adds it to helpers
                 string name = tilemap.GetName(Mathf.RoundToInt(trueend.x),Mathf.RoundToInt(trueend.y));
                 if (name != null)
                 {
@@ -314,6 +339,7 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if (!invul)
         {
+            // adds the viewers name that caused the damage to enemies
             if (name != null)
             {
                 print(name);
@@ -332,6 +358,7 @@ public class PlayerBehaviour : MonoBehaviour
                 }
             }
             hp -= 1;
+            // loses the game if hp runs out
             if (hp <= 0)
             {
                 SceneManager.LoadScene("Lose");
@@ -342,6 +369,8 @@ public class PlayerBehaviour : MonoBehaviour
                 render.color = new Color(render.color.r, render.color.g, render.color.b, 0.5f);
                 Vector3 push_direction = transform.position - source;
                 rb.velocity = Vector2.zero;
+
+                // pushes the player away from the damage source
                 rb.AddForce(new Vector2(push_direction.x, push_direction.y) * 10, ForceMode2D.Impulse);
                 jumping = false;
                 jump_hold_timer = max_jump_hold_time;
@@ -351,12 +380,14 @@ public class PlayerBehaviour : MonoBehaviour
         }
     }
 
+    // if the player falls into the void, take damage and reset to the start
     public void ResetPos()
     {
         TakeDamage();
         transform.position = respawnPos;
     }
 
+    // damage without a source
     void TakeDamage()
     {
         hp -= 1;
@@ -375,11 +406,13 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        // resets the players position if they fall off
         if (collision.gameObject.tag == "deathPlane")
         {
             ResetPos();
         }
 
+        // wins the game if they touch the goal
         if (collision.gameObject.tag == "Goal")
         {
             SceneManager.LoadScene("Win");
@@ -388,8 +421,10 @@ public class PlayerBehaviour : MonoBehaviour
 
     public bool Heal(string name)
     {
+        // heals the player if not at max hp
         if (hp <= max_hp)
         {
+            // adds the player who spawned it to helpers
             hp += 1;
             if (channelScriptable.helpers.Contains(name))
             {

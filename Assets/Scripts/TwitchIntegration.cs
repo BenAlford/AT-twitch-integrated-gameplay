@@ -17,67 +17,65 @@ public class TwitchIntegration : MonoBehaviour
     const string url = "irc.chat.twitch.tv";
     const int port = 6667;
 
-    string user = "BenTheGameDev";
-    string OAuth = "oauth:aqvkhqc4stflmciixkaa9q8u7vsr9o";
-    string channel = "BenTheGameDev";
+    string username = "BenTheGameDev";
+    string OAuthToken = "oauth:aqvkhqc4stflmciixkaa9q8u7vsr9o";
+    string channel;
 
     public ChannelScriptable channel_scriptable;
 
-    float ping_counter = 0;
+    float ping_timer = 0;
 
-    private void ConnectToTwitch()
+    private void Connect()
     {
         twitch = new TcpClient(url, port);
         reader = new StreamReader(twitch.GetStream());
         writer = new StreamWriter(twitch.GetStream());
 
-        writer.WriteLine("PASS " + OAuth);
-        writer.WriteLine("NICK " + user.ToLower());
+        writer.WriteLine("PASS " + OAuthToken);
+        writer.WriteLine("NICK " + username.ToLower());
         writer.WriteLine("JOIN #" + channel.ToLower());
         writer.Flush();
     }
 
-    // Start is called before the first frame update
     void Awake()
     {
         channel = channel_scriptable.channel;
-        ConnectToTwitch();
+        Connect();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //{
-        //    writer.WriteLine($"PRIVMSG #{channel} :hi");
-        //    writer.Flush();
-        //}
+        // ping keeps the connection alive
         GetComponent<SpriteRenderer>().color = Color.green;
-        ping_counter += Time.deltaTime;
-        if (ping_counter > 60)
+        ping_timer += Time.deltaTime;
+        if (ping_timer > 60)
         {
             writer.WriteLine("PING " + url);
             writer.Flush();
-            ping_counter = 0;
+            ping_timer = 0;
         }
-        if (!twitch.Connected)
-        {
-            GetComponent<SpriteRenderer>().color = Color.red;
-            ConnectToTwitch();
-        }
+
+        // if there is a message
         while (twitch.Available > 0)
         {
-            string message = reader.ReadLine();
-            print(message);
-            if (message.Contains("PRIVMSG"))
+            string chat_message = reader.ReadLine();
+            print(chat_message);
+            // processes the message if it is a twitch chat message
+            if (chat_message.Contains("PRIVMSG"))
             {
-                string name = message.Substring(1, message.IndexOf("!") - 1);
-                string msg = message.Substring(message.IndexOf(":",1) + 1, message.Length - message.IndexOf(":", 1) - 1);
-                print(name);
-                print(msg);
-                //OnChatMessage?.Invoke(name, msg);
-                input.OnChatMessage(name, msg);
+                string viewer_name = chat_message.Substring(1, chat_message.IndexOf("!") - 1);
+                string viewer_msg = chat_message.Substring(chat_message.IndexOf(":",1) + 1, chat_message.Length - chat_message.IndexOf(":", 1) - 1);
+                print(viewer_name);
+                print(viewer_msg);
+                input.OnChatMessage(viewer_name, viewer_msg);
             }
+        }
+
+        if (!twitch.Connected)
+        {
+            // reconnects to twitch if it gets disconnected
+            GetComponent<SpriteRenderer>().color = Color.red;
+            Connect();
         }
     }
 }

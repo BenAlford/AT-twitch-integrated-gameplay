@@ -27,6 +27,7 @@ public class BombBehaviour : MonoBehaviour
     {
         if (exploded)
         {
+            // destroys gameobject after the explosion ends
             explode_timer -= Time.deltaTime;
             if (explode_timer < 0 )
             {
@@ -35,6 +36,7 @@ public class BombBehaviour : MonoBehaviour
         }
         else
         {
+            // after a set time, explode
             timer -= Time.deltaTime;
             if (timer < 0)
             {
@@ -46,6 +48,8 @@ public class BombBehaviour : MonoBehaviour
                 GetComponent<Rigidbody2D>().simulated = false;
                 Collider2D[] objs = Physics2D.OverlapBoxAll(new Vector2(transform.position.x, transform.position.y), new Vector2(newrad,newrad),0);
                 print(objs.Length);
+
+                // damages the player if in the bomb radius
                 for (int i = 0; i < objs.Length; i++)
                 {
                     if (objs[i].gameObject.tag == "Player")

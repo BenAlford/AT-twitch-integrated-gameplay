@@ -10,6 +10,7 @@ public class SliderTextBehaviour : MonoBehaviour
     public GameObject slider_object;
     Slider slider;
     public TextMeshProUGUI textobj;
+
     // Start is called before the first frame update
     void Start()
     {

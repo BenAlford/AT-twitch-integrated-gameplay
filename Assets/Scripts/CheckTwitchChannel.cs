@@ -21,6 +21,8 @@ public class CheckTwitchChannel : MonoBehaviour
 
         string channel = GetComponent<TextMeshProUGUI>().text;
         channel = channel.Substring(0, channel.Length - 1);
+
+        // presence check for a twitch channels
         if (!string.IsNullOrEmpty(channel))
         {
             channel_scriptable.channel = channel;
